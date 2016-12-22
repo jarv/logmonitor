@@ -1,0 +1,23 @@
+---
+
+# Site for the logs we are monitoring
+site: https://www.example.com
+
+# period to monitor in seconds
+monitor_period: 120
+
+# period to update stats
+stats_period: 10
+
+# traffic alert thresholds
+alert_avg_traffic: 1
+
+# Access log to monitor
+# Should be formated using the Common Log Format
+# https://en.wikipedia.org/wiki/Common_Log_Format
+log: "/tmp/access.log"
+
+
+# Stats for the periodic status
+# summary
+stats: ["section", "status", "verb", "size"]
