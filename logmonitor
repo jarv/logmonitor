@@ -1,5 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3 -u
 
+import datetime
 import time
 import sys
 import os
@@ -25,15 +26,16 @@ def stats():
 
 
 def check_alerts():
+    dt = datetime.datetime.now()
     try:
         alert, avg = traffic_mon.check_alert(config['alert_avg_traffic'])
     except NotEnoughDataPoints as e:
         print(e)
         return None
     if alert == STATUS.alert:
-        return "ALERT: Avg traffic: {} above threshold: {}".format(avg, config['alert_avg_traffic'])
+        return "ALERT: Avg traffic: {} above threshold: {} at {}".format(avg, config['alert_avg_traffic'], dt)
     elif alert == STATUS.clear:
-        return "CLEAR: Avg traffic: {} below threshold: {}".format(avg, config['alert_avg_traffic'])
+        return "CLEAR: Avg traffic: {} below threshold: {} at {}".format(avg, config['alert_avg_traffic'], dt)
     else:
         return None
 
@@ -48,8 +50,9 @@ if __name__ == '__main__':
         while True:
             if counter % 10 == 0:
                 stats()
-                print("Current Alerts:")
+                print("\nWill alert when average traffic over {} seconds exceeds {}:".format(config['monitor_period'], config['alert_avg_traffic']))
                 alert = check_alerts()
+                print("Collection queue (1 second bins): '{}'".format(",".join([str(q) for q in list(traffic_mon._queue)])))
                 if alert:
                     if not alerts or alerts[-1] != alert:
                         alerts.append(alert)

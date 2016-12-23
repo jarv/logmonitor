@@ -4,7 +4,7 @@
 site: https://www.example.com
 
 # period to monitor in seconds
-monitor_period: 10
+monitor_period: 120
 
 # period to update stats
 stats_period: 10

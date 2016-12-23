@@ -35,12 +35,12 @@ class TrafficMon(object):
 
     def _get_avg(self):
         if len(self._queue) < self._num_ticks:
-            raise NotEnoughDataPoints("Waiting for more datapoints: {}".format(len(self._queue)))
+            raise NotEnoughDataPoints("Waiting for more datapoints: have: {}, need: {}".format(len(self._queue), self._num_ticks))
         return float(sum(self._queue) / max(len(self._queue), 1))
 
-    def tick(self):
+    def tick(self, tick_start=None):
         """
-        This is called every second.
+        This function should be called once for every tick window.
 
         Read up to the end of the file we are monitoring
         keeping entries in the buffer for current_time - tick_window.
@@ -51,10 +51,11 @@ class TrafficMon(object):
               * Low traffic as well as high traffic.
         """
 
-        # current time, timezone aware
-        now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+        if not tick_start:
+            # current time, timezone aware
+            tick_start = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
         increment = datetime.timedelta(seconds=self._tick_window)
-        keep = now - increment
+        keep = tick_start - increment
 
         # Remove entries in buffer that are older
         # than the keep window

@@ -19,7 +19,7 @@ class LogStats(object):
         TODO: * Improve the regex to make it more robust
         """
         for line in self._logreader.get_lines_from_log():
-            m = re.search(r' "(?P<verb>.*?) (?P<section>.*?) .*?" (?P<status>.*?) (?P<size>.*?)$', line)
+            m = re.search(r' "(?P<verb>.*?) (?P<section>\/[^/]*).* .*?" (?P<status>.*?) (?P<size>.*?)$', line)
             if not m:
                 raise LogParseError("Unable to find section in line '{}'".format(line))
             for stat in self._stats:

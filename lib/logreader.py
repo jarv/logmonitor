@@ -29,4 +29,4 @@ class LogReader(object):
                 f.seek(self._last_position)
             for line in f.readlines():
                 yield line
-                self._last_position = f.tell() + 1
+                self._last_position = f.tell()
