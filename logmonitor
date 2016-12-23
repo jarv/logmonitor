@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+
+import time
+import sys
+import os
+from tabulate import tabulate
+sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
+from config import config_from_yaml  # noqa: E731
+from logstats import LogStats  # noqa: E731
+from traffic_mon import TrafficMon, STATUS, NotEnoughDataPoints  # noqa: E731
+
+
+def disp_max(stats):
+    max_stats = []
+    for stat in config['stats']:
+        max_stats.append((stat, sorted(stats[stat].items(), key=lambda k: k[1], reverse=True)[0:3]))
+    print(tabulate(max_stats, headers=["Type", "Name, Count"]))
+
+
+def stats():
+    summary_stats = log_stats.get_summary_stats()
+    print()
+    print("Top 3 with the most hits")
+    disp_max(summary_stats)
+
+
+def check_alerts():
+    try:
+        alert, avg = traffic_mon.check_alert(config['alert_avg_traffic'])
+    except NotEnoughDataPoints as e:
+        print(e)
+        return None
+    if alert == STATUS.alert:
+        return "ALERT: Avg traffic: {} above threshold: {}".format(avg, config['alert_avg_traffic'])
+    elif alert == STATUS.clear:
+        return "CLEAR: Avg traffic: {} below threshold: {}".format(avg, config['alert_avg_traffic'])
+    else:
+        return None
+
+
+if __name__ == '__main__':
+    try:
+        alerts = []
+        config = config_from_yaml()
+        log_stats = LogStats(logfile=config['log'], stats=config['stats'])
+        traffic_mon = TrafficMon(logfile=config['log'], num_ticks=config['monitor_period'])
+        counter = 0
+        while True:
+            if counter % 10 == 0:
+                stats()
+                print("Current Alerts:")
+                alert = check_alerts()
+                if alert:
+                    if not alerts or alerts[-1] != alert:
+                        alerts.append(alert)
+                print("\n".join(alerts))
+            traffic_mon.tick()
+            time.sleep(1)
+            counter += 1
+    except Exception as e:
+        sys.stderr.write("ERROR: {}\n".format(e))
+        raise
+        sys.exit(1)

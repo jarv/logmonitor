@@ -2,7 +2,22 @@
 
 # Summary
 
+## Installation
+
+    # Install requirements
+    easy_install3 pip
+    pip3 install -r requirements.txt
+
+    # Edit config.yml to point to a log in "Common Log Format" or
+    # run the following to generate dummy data
+    ./bin/gen_fake_logs 50 > /tmp/access.log
+
+    # Run the log watcher
+    ./logmonitor
+
+
 ## Description
+
 HTTP log monitoring console program
 Create a simple console program that monitors HTTP traffic on your machine:
 Consume an actively written-to w3c-formatted HTTP access log (https://en.wikipedia.org/wiki/Common_Log_Format)

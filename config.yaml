@@ -1,27 +1,16 @@
 ---
 
-# Configuration file for logmonitor
-
 # Site for the logs we are monitoring
 site: https://www.example.com
 
 # period to monitor in seconds
-monitor_period: 120
+monitor_period: 10
+
 # period to update stats
 stats_period: 10
 
 # traffic alert thresholds
-alert_avg: 10
-# TODO alert_p50: 10
-# TODO threshold_p90: 10
-
-# number datapoints above the threshold
-# to alert
-alert_datapoints: 1
-
-# number of datapoints above the threshold
-# to clear
-clear_datapoints: 1
+alert_avg_traffic: 1
 
 # Access log to monitor
 # Should be formated using the Common Log Format
@@ -29,6 +18,6 @@ clear_datapoints: 1
 log: "/tmp/access.log"
 
 
-# High level stats for the periodic status
+# Stats for the periodic status
 # summary
 stats: ["section", "status", "verb", "size"]
